@@ -15,7 +15,7 @@ import com.example.shoppinglist.R
 fun MainScreen() {
     Scaffold(
         bottomBar = {
-
+            BottomNav()
         },
         floatingActionButton = {
             // Круглая кнопка
@@ -27,7 +27,10 @@ fun MainScreen() {
                 )
 
             }
-        }, floatingActionButtonPosition = FabPosition.Center
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        // Поверх bottomNav
+        isFloatingActionButtonDocked = true
     ) {
 
     }
