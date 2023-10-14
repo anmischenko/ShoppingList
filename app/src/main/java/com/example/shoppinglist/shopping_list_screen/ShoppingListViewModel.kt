@@ -29,13 +29,13 @@ class ShoppingListViewModel @Inject constructor(
 
     private var listItem: ShoppingListItem? = null
 
-    override var dialogTitle = mutableStateOf("list name")
+    override var dialogTitle = mutableStateOf("")
         private set
     override var editableText = mutableStateOf("")
         private set
-    override var openDialog = mutableStateOf(true)
+    override var openDialog = mutableStateOf(false)
         private set
-    override var showEditableText = mutableStateOf(true)
+    override var showEditableText = mutableStateOf(false)
         private set
 
     fun onEvent(event: ShoppingListEvent) {

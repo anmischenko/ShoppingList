@@ -18,5 +18,5 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = hiltViewModel()) {
             .wrapContentWidth()
             .wrapContentHeight()
     )
-    MainDialog(dialogController = viewModel)
+
 }

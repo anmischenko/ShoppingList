@@ -8,14 +8,18 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.shoppinglist.R
 import com.example.shoppinglist.dialog.MainDialog
 import com.example.shoppinglist.navigation.NavigationGraph
+import com.example.shoppinglist.shopping_list_screen.ShoppingListViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainScreenViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -23,7 +27,10 @@ fun MainScreen() {
         },
         floatingActionButton = {
             // Круглая кнопка
-            FloatingActionButton(onClick = { }) {
+            FloatingActionButton(
+                onClick = {
+                    viewModel.onEvent(MainScreenEvent.OnShowEditDialog)
+                }) {
                 Icon(
                     painter = painterResource(id = R.drawable.add_icon),
                     contentDescription = "Add",
@@ -38,5 +45,6 @@ fun MainScreen() {
     ) {
         // Отвечает за то, какой экран показать
         NavigationGraph(navController)
+        MainDialog(viewModel)
     }
 }
