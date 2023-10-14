@@ -1,15 +1,19 @@
 package com.example.shoppinglist.shopping_list_screen
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.data.ShoppingListItem
 import com.example.shoppinglist.data.ShoppingListRepository
 import com.example.shoppinglist.dialog.DialogEvent
-import com.example.shoppinglist.utils.DialogController
+import com.example.shoppinglist.dialog.DialogController
+import com.example.shoppinglist.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+
+
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,15 +22,20 @@ class ShoppingListViewModel @Inject constructor(
 ) : ViewModel(), DialogController {
 
     private val list = repository.getAllItems()
+
+    private val _uiEvent = Channel<UiEvent>()
+
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     private var listItem: ShoppingListItem? = null
 
-    override var dialogTitle = mutableStateOf("")
+    override var dialogTitle = mutableStateOf("list name")
         private set
     override var editableText = mutableStateOf("")
         private set
-    override var openDialog = mutableStateOf(false)
+    override var openDialog = mutableStateOf(true)
         private set
-    override var showEditableText = mutableStateOf(false)
+    override var showEditableText = mutableStateOf(true)
         private set
 
     fun onEvent(event: ShoppingListEvent) {
@@ -46,7 +55,7 @@ class ShoppingListViewModel @Inject constructor(
                 }
             }
             is ShoppingListEvent.OnItemClick -> {
-
+                sentUiEvent(UiEvent.Navigate(event.route))
             }
             is ShoppingListEvent.OnShowEditDialog -> {
                 listItem = event.item
@@ -64,7 +73,7 @@ class ShoppingListViewModel @Inject constructor(
         }
     }
 
-    fun onDialogEvent(event: DialogEvent) {
+    override fun onDialogEvent(event: DialogEvent) {
         when (event) {
             is DialogEvent.OnCancel -> {
                 openDialog.value = false
@@ -82,6 +91,12 @@ class ShoppingListViewModel @Inject constructor(
             is DialogEvent.OnTextChange -> {
                 editableText.value = event.text
             }
+        }
+    }
+
+    private fun sentUiEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
         }
     }
 

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.rememberNavController
 import com.example.shoppinglist.R
+import com.example.shoppinglist.dialog.MainDialog
 import com.example.shoppinglist.navigation.NavigationGraph
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
