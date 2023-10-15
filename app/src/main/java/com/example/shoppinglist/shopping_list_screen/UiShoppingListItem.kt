@@ -26,6 +26,7 @@ import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListItem
 import com.example.shoppinglist.ui.theme.Green
 import com.example.shoppinglist.ui.theme.Red
+import com.example.shoppinglist.utils.Routes
 
 @Composable
 fun UiShoppingListItem(
@@ -50,7 +51,11 @@ fun UiShoppingListItem(
                     end.linkTo(parent.end)
                 }
                 .clickable {
-
+                    onEvent(
+                        ShoppingListEvent.OnItemClick(
+                            Routes.ADD_ITEM + "/${item.id}"
+                        )
+                    )
                 }
         ) {
             Column(
