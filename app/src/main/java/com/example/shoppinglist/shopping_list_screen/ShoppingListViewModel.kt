@@ -21,7 +21,7 @@ class ShoppingListViewModel @Inject constructor(
     private val repository: ShoppingListRepository
 ) : ViewModel(), DialogController {
 
-    private val list = repository.getAllItems()
+    val list = repository.getAllItems()
 
     private val _uiEvent = Channel<UiEvent>()
 
@@ -41,6 +41,7 @@ class ShoppingListViewModel @Inject constructor(
     fun onEvent(event: ShoppingListEvent) {
         when (event) {
             is ShoppingListEvent.OnItemSave -> {
+                if (editableText.value.isBlank()) return
                 viewModelScope.launch {
                     repository.insertItem(
                         ShoppingListItem(

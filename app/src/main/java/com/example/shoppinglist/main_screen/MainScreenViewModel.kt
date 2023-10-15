@@ -30,7 +30,7 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(event: MainScreenEvent) {
         when (event) {
             is MainScreenEvent.OnItemSave -> {
-                if (editableText.value.isEmpty()) return
+                if (editableText.value.isBlank()) return
                 viewModelScope.launch {
                     repository.insertItem(
                         ShoppingListItem(
@@ -54,10 +54,11 @@ class MainScreenViewModel @Inject constructor(
         when (event) {
             is DialogEvent.OnCancel -> {
                 openDialog.value = false
+                editableText.value = ""
             }
             is DialogEvent.OnConfirm -> {
                 onEvent(MainScreenEvent.OnItemSave)
-
+                editableText.value = ""
                 openDialog.value = false
             }
             is DialogEvent.OnTextChange -> {
