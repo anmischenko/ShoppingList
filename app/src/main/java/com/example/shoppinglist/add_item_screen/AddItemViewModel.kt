@@ -10,9 +10,12 @@ import com.example.shoppinglist.data.AddItemRepository
 import com.example.shoppinglist.data.ShoppingListItem
 import com.example.shoppinglist.dialog.DialogController
 import com.example.shoppinglist.dialog.DialogEvent
+import com.example.shoppinglist.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +25,8 @@ class AddItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DialogController {
 
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
     var itemsList: Flow<List<AddItem>>? = null
     var addItem: AddItem? = null
     var shoppingListItem: ShoppingListItem? = null
@@ -52,6 +57,17 @@ class AddItemViewModel @Inject constructor(
             is AddItemEvent.OnItemSave -> {
                 viewModelScope.launch {
                     if (listId == -1) return@launch
+                    if (addItem != null) {
+                        if (addItem!!.name.isEmpty()) {
+                            sentUiEvent(UiEvent.ShowSnackBar("Name must not be empty!"))
+                            return@launch
+                        }
+                    } else {
+                        if (itemText.value.isEmpty()) {
+                            sentUiEvent(UiEvent.ShowSnackBar("Name must not be empty!"))
+                            return@launch
+                        }
+                    }
                     repository.insertItem(
                         AddItem(
                             addItem?.id,
@@ -73,7 +89,7 @@ class AddItemViewModel @Inject constructor(
             }
 
             is AddItemEvent.OnTextChange -> {
-                editableText.value = event.text
+                itemText.value = event.text
             }
 
             is AddItemEvent.OnDelete -> {
@@ -131,6 +147,12 @@ class AddItemViewModel @Inject constructor(
                 }
 
             }
+        }
+    }
+
+    private fun sentUiEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
         }
     }
 }

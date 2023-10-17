@@ -13,9 +13,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.shoppinglist.ui.theme.BlueLight
 import com.example.shoppinglist.ui.theme.GreyLight
+import com.example.shoppinglist.utils.UiEvent
 
 @Composable
-fun BottomNav(navController: NavHostController) {
+fun BottomNav(
+    currentRoute: String?,
+    onNavigate: (String) -> Unit
+) {
     val listItems = listOf(
         BottomNavItem.ListItem,
         BottomNavItem.NoteItem,
@@ -24,14 +28,11 @@ fun BottomNav(navController: NavHostController) {
     )
     BottomNavigation(backgroundColor = Color.White) {
         listItems.forEach {
-            // Какой экран в данный момент открыт
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            // Экран, который в данный момент выбран
-            val currentRoute = navBackStackEntry?.destination?.route
+
             BottomNavigationItem(
                 selected = currentRoute == it.route,
                 onClick = {
-                          navController.navigate(it.route)
+                          onNavigate(it.route)
                 },
                 icon = {
                     Icon(
