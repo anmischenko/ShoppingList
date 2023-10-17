@@ -23,7 +23,6 @@ class AddItemViewModel @Inject constructor(
 ) : ViewModel(), DialogController {
 
     var itemsList: Flow<List<AddItem>>? = null
-
     var addItem: AddItem? = null
     var shoppingListItem: ShoppingListItem? = null
     var listId: Int = -1
@@ -38,6 +37,7 @@ class AddItemViewModel @Inject constructor(
 
     var itemText = mutableStateOf("")
         private set
+
     override var dialogTitle = mutableStateOf("Edit name:")
         private set
     override var editableText = mutableStateOf("")
@@ -49,13 +49,13 @@ class AddItemViewModel @Inject constructor(
 
     fun onEvent(event: AddItemEvent) {
         when (event) {
-            is AddItemEvent.onItemSave -> {
+            is AddItemEvent.OnItemSave -> {
                 viewModelScope.launch {
                     if (listId == -1) return@launch
                     repository.insertItem(
                         AddItem(
                             addItem?.id,
-                            itemText.value,
+                            addItem?.name ?: itemText.value,
                             addItem?.isCheck ?: false,
                             listId
                         )
@@ -66,24 +66,24 @@ class AddItemViewModel @Inject constructor(
                 updateShoppingListCount()
             }
 
-            is AddItemEvent.onShowEditDialog -> {
+            is AddItemEvent.OnShowEditDialog -> {
                 addItem = event.item
                 openDialog.value = true
                 editableText.value = addItem?.name ?: ""
             }
 
-            is AddItemEvent.onTextChange -> {
+            is AddItemEvent.OnTextChange -> {
                 editableText.value = event.text
             }
 
-            is AddItemEvent.onDelete -> {
+            is AddItemEvent.OnDelete -> {
                 viewModelScope.launch {
                     repository.deleteItem(event.item)
                 }
                 updateShoppingListCount()
             }
 
-            is AddItemEvent.onCheckedChange -> {
+            is AddItemEvent.OnCheckedChange -> {
                 viewModelScope.launch {
                     repository.insertItem(event.item)
                 }
@@ -100,9 +100,10 @@ class AddItemViewModel @Inject constructor(
             }
 
             is DialogEvent.OnConfirm -> {
-                editableText.value = ""
-                itemText.value = editableText.value
                 openDialog.value = false
+                addItem = addItem?.copy(name = editableText.value)
+                editableText.value = ""
+                onEvent(AddItemEvent.OnItemSave)
             }
 
             is DialogEvent.OnTextChange -> {
