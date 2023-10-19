@@ -26,6 +26,7 @@ import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListItem
 import com.example.shoppinglist.ui.theme.Green
 import com.example.shoppinglist.ui.theme.Red
+import com.example.shoppinglist.utils.ProgressHelper
 import com.example.shoppinglist.utils.Routes
 
 @Composable
@@ -82,7 +83,10 @@ fun UiShoppingListItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 5.dp),
-                    progress = 0.5f
+                    progress = ProgressHelper.getProgress(
+                        item.allItemsCount,
+                        item.allSelectedItemsCount
+                    )
                 )
             }
         }
