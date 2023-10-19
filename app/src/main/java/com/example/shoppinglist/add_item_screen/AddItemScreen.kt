@@ -14,6 +14,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -36,6 +38,7 @@ import com.example.shoppinglist.R
 import com.example.shoppinglist.dialog.MainDialog
 import com.example.shoppinglist.ui.theme.EmptyText
 import com.example.shoppinglist.ui.theme.GreyLight
+import com.example.shoppinglist.ui.theme.Red
 import com.example.shoppinglist.utils.UiEvent
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -58,7 +61,12 @@ fun AddItemScreen(
             }
         }
     }
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(scaffoldState = scaffoldState, snackbarHost = {
+        SnackbarHost(hostState = scaffoldState.snackbarHostState) {data ->
+            Snackbar(snackbarData = data,
+                backgroundColor = Red)
+        }
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

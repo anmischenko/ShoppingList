@@ -14,18 +14,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shoppinglist.R
-import com.example.shoppinglist.add_item_screen.AddItemEvent
+import com.example.shoppinglist.data.NoteItem
 import com.example.shoppinglist.ui.theme.BlueLight
 import com.example.shoppinglist.ui.theme.LightText
 import com.example.shoppinglist.ui.theme.Red
+import com.example.shoppinglist.utils.Routes
+import com.example.shoppinglist.utils.UiEvent
 
-@Preview(showBackground = true)
 @Composable
-fun UiNoteItem() {
+fun UiNoteItem(
+    item: NoteItem,
+    onEvent: (NoteListEvent) -> Unit
+) {
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(
@@ -34,7 +37,11 @@ fun UiNoteItem() {
             end = 3.dp
         )
         .clickable {
-
+            onEvent(
+                NoteListEvent.OnItemClick(
+                    Routes.NEW_NOTE + "/${item.id}"
+                )
+            )
         }) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -44,7 +51,8 @@ fun UiNoteItem() {
                             top = 10.dp,
                             start = 10.dp
                         )
-                        .weight(1f), text = "Note 1",
+                        .weight(1f),
+                    text = item.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -53,25 +61,27 @@ fun UiNoteItem() {
                         top = 10.dp,
                         end = 10.dp
                     ),
-                    text = "12/12/2023 13:00",
+                    text = item.time,
                     color = BlueLight,
                     fontSize = 12.sp
                 )
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    modifier = Modifier.padding(
-                        start = 10.dp,
-                        top = 5.dp,
-                        bottom = 10.dp
-                    ).weight(1f),
-                    text = "dfnksdjfsdf dkfskldjf sdkfjsldf",
+                    modifier = Modifier
+                        .padding(
+                            start = 10.dp,
+                            top = 5.dp,
+                            bottom = 10.dp
+                        )
+                        .weight(1f),
+                    text = item.description,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     color = LightText
                 )
                 IconButton(onClick = {
-
+                    onEvent(NoteListEvent.OnShowDeleteDialog(item))
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.delete_icon),

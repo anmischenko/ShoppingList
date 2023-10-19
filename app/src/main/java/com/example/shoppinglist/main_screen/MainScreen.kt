@@ -53,7 +53,7 @@ fun MainScreen(
         },
         floatingActionButton = {
             if (viewModel.showFloatingButton.value)
-            // Круглая кнопка
+                // Круглая кнопка
             FloatingActionButton(
                 onClick = {
                     viewModel.onEvent(MainScreenEvent.OnNewItemClick(currentRoute!!))
