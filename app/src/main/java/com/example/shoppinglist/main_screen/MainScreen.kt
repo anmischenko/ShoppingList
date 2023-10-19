@@ -18,6 +18,7 @@ import com.example.shoppinglist.R
 import com.example.shoppinglist.dialog.MainDialog
 import com.example.shoppinglist.navigation.NavigationGraph
 import com.example.shoppinglist.shopping_list_screen.ShoppingListViewModel
+import com.example.shoppinglist.utils.Routes
 import com.example.shoppinglist.utils.UiEvent
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -55,7 +56,7 @@ fun MainScreen(
             // Круглая кнопка
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(MainScreenEvent.OnShowEditDialog)
+                    viewModel.onEvent(MainScreenEvent.OnNewItemClick(currentRoute!!))
                 }) {
                 Icon(
                     painter = painterResource(id = R.drawable.add_icon),
