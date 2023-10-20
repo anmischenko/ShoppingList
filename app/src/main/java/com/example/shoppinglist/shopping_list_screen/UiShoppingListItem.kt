@@ -24,6 +24,7 @@ import com.example.shoppinglist.ui.theme.DarkText
 import com.example.shoppinglist.ui.theme.LightText
 import com.example.shoppinglist.R
 import com.example.shoppinglist.data.ShoppingListItem
+import com.example.shoppinglist.settings_screen.ColorUtils
 import com.example.shoppinglist.ui.theme.Green
 import com.example.shoppinglist.ui.theme.Red
 import com.example.shoppinglist.utils.ProgressHelper
@@ -34,6 +35,9 @@ fun UiShoppingListItem(
     item: ShoppingListItem,
     onEvent: (ShoppingListEvent) -> Unit
 ) {
+    val progress = ProgressHelper.getProgress(
+        item.allItemsCount,
+        item.allSelectedItemsCount)
     ConstraintLayout(
         modifier = Modifier.padding(
             start = 5.dp,
@@ -83,10 +87,8 @@ fun UiShoppingListItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 5.dp),
-                    progress = ProgressHelper.getProgress(
-                        item.allItemsCount,
-                        item.allSelectedItemsCount
-                    )
+                    progress = progress,
+                    color = ColorUtils.getProgressColor(progress)
                 )
             }
         }
