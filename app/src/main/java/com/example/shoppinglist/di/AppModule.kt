@@ -3,6 +3,7 @@ package com.example.shoppinglist.di
 import android.app.Application
 import androidx.room.Room
 import com.example.shoppinglist.data.*
+import com.example.shoppinglist.datastore.DataStoreManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +35,11 @@ object AppModule {
     @Singleton
     fun provideNoteRepo(db: MainDb) : NoteRepository {
         return NoteRepoImpl(db.noteDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(app: Application) : DataStoreManager {
+        return DataStoreManager(app)
     }
 }

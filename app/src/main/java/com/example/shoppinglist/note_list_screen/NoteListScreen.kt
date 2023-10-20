@@ -47,6 +47,7 @@ fun NoteListScreen(
                 is UiEvent.Navigate -> {
                     onNavigate(uiEvent.route)
                 }
+
                 is UiEvent.ShowSnackBar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
                         message = uiEvent.message,
@@ -56,15 +57,18 @@ fun NoteListScreen(
                         viewModel.onEvent(NoteListEvent.UnDoneDeleteItem)
                     }
                 }
+
                 else -> {}
             }
         }
     }
     Scaffold(scaffoldState = scaffoldState, snackbarHost = {
-        SnackbarHost(hostState = scaffoldState.snackbarHostState) {data ->
-            Snackbar(snackbarData = data,
+        SnackbarHost(hostState = scaffoldState.snackbarHostState) { data ->
+            Snackbar(
+                snackbarData = data,
                 backgroundColor = Red,
-                modifier = Modifier.padding(bottom = 100.dp) )
+                modifier = Modifier.padding(bottom = 100.dp)
+            )
         }
     }) {
         LazyColumn(
@@ -74,7 +78,7 @@ fun NoteListScreen(
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
             items(itemsList.value) { item ->
-                UiNoteItem(item) { event ->
+                UiNoteItem(viewModel.titleColor.value, item) { event ->
                     viewModel.onEvent(event)
                 }
             }

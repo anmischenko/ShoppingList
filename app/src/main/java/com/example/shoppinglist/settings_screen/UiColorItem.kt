@@ -18,11 +18,11 @@ import com.example.shoppinglist.R
 @Composable
 fun UiColorItem(
     item: ColorItem,
-//    onEvent: (SettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit
 ) {
     IconButton(
         onClick = {
-            //onEvent(SettingsEvent.OnItemSelected(item.color))
+            onEvent(SettingsEvent.OnItemSelected(item.color))
         },
         modifier = Modifier
             .padding(start = 10.dp)

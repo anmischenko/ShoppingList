@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.data.NoteItem
 import com.example.shoppinglist.data.NoteRepository
+import com.example.shoppinglist.datastore.DataStoreManager
 import com.example.shoppinglist.dialog.DialogController
 import com.example.shoppinglist.dialog.DialogEvent
 import com.example.shoppinglist.utils.UiEvent
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteListViewModel @Inject constructor(
-    private val repository: NoteRepository
+    private val repository: NoteRepository,
+    dataStoreManager: DataStoreManager
 ) : ViewModel(), DialogController {
     val noteList = repository.getAllItems()
 
@@ -24,6 +26,8 @@ class NoteListViewModel @Inject constructor(
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    var titleColor = mutableStateOf("#03A9F4")
 
     override var dialogTitle = mutableStateOf("Delete this note?")
         private set
@@ -33,6 +37,17 @@ class NoteListViewModel @Inject constructor(
         private set
     override var showEditableText = mutableStateOf(false)
         private set
+
+    init {
+        viewModelScope.launch {
+            dataStoreManager.getStringPreference(
+                DataStoreManager.TITLE_COLOR,
+                "#03A9F4"
+            ).collect { color ->
+                titleColor.value = color
+            }
+        }
+    }
 
     fun onEvent(event: NoteListEvent) {
         when(event) {
