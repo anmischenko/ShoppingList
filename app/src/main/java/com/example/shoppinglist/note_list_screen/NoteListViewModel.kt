@@ -1,6 +1,8 @@
 package com.example.shoppinglist.note_list_screen
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.data.NoteItem
@@ -20,7 +22,11 @@ class NoteListViewModel @Inject constructor(
     private val repository: NoteRepository,
     dataStoreManager: DataStoreManager
 ) : ViewModel(), DialogController {
-    val noteList = repository.getAllItems()
+    val noteListFlow = repository.getAllItems()
+
+    var noteList by mutableStateOf(listOf<NoteItem>())
+
+    var originNoteList = listOf<NoteItem>()
 
     private var noteItem: NoteItem? = null
 
@@ -28,6 +34,9 @@ class NoteListViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var titleColor = mutableStateOf("#03A9F4")
+
+    var searchText by mutableStateOf("")
+        private set
 
     override var dialogTitle = mutableStateOf("Delete this note?")
         private set
@@ -47,20 +56,36 @@ class NoteListViewModel @Inject constructor(
                 titleColor.value = color
             }
         }
+
+        viewModelScope.launch {
+            noteListFlow.collect {list ->
+                noteList = list
+                originNoteList = list
+            }
+        }
     }
 
     fun onEvent(event: NoteListEvent) {
-        when(event) {
+        when (event) {
             is NoteListEvent.OnShowDeleteDialog -> {
                 openDialog.value = true
                 noteItem = event.item
             }
+
             is NoteListEvent.OnItemClick -> {
                 sentUiEvent(UiEvent.Navigate(event.route))
             }
+
             is NoteListEvent.UnDoneDeleteItem -> {
                 viewModelScope.launch {
                     repository.insertItem(noteItem!!)
+                }
+            }
+
+            is NoteListEvent.OnTextSearchChange -> {
+                searchText = event.text
+                noteList = originNoteList.filter {note ->
+                    note.title.lowercase().startsWith(searchText.lowercase())
                 }
             }
         }
